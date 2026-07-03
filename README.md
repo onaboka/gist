@@ -236,6 +236,148 @@ export function loadItems() {
 - storage.js -> handles persistence logic (loadItems(), saveItems()) with local Storage
 - ui.js -> handles DOM rendering (render() and UI updates)
 
+```ts
+// Should be let state instead of const
+const state: any = {
+  items: JSON.parse(localStorage.getItem('items') || '[]'),
+};
 
+// Better HTMLElement  | null with proper check  
+const root: any = document.getElementById('app');
+
+const setState = (patch: any) => {
+  // state reassignment requires let state , not const
+  state = {
+    ...state,
+    ...(typeof patch === 'function' ? patch(state) : patch),
+  };
+  localStorage.setItem('items', JSON.stringify(state.items));
+
+  // Simple BUT inefficient for large DOM object
+  render();
+};
+
+function render() {
+  // Not optimized
+  root.innerHTML = '';
+  const main = document.createElement('main');
+  const list = state.items.reduce(
+    // map.join would be clearer
+    (items: any, item: any) => `${items}
+      <li id="${item.id}">
+        ${((item && (item.title || item.text)) || '(untitled)').trim()}
+        <button data-remove>✘</button>
+      </li>`,
+  );
+
+  main.innerHTML = `<form>
+    <input placeholder="Todo…" />
+    <button type="submit">Add</button>
+  </form>
+  <ul>${list}</ul>`;
+
+  const form = main.querySelector('form')!;
+  function formSubmit(e: any) {
+    e.preventDefault();
+    const input = main.querySelector('input');
+    const text = (input.value || '').trim();
+    if (!text) return;
+    // Better improved with data-id OR dataset
+    setState((s: any) => ({
+      items: [...s.items, { id: Date.now(), text }],
+    }));
+    input.value = '';
+  }
+  form.onsubmit = formSubmit;
+
+  main.onclick = (e: any) => {
+    const button = e.target;
+    if (!button?.matches?.('[data-remove]')) return;
+    const id = button.closest('li')?.getAttribute('id');
+    setState((s: any) => ({
+      items: s.items.filter((x: any) => x.id !== Number(id)),
+    }));
+  };
+
+  root.appendChild(main);
+}
+render();
+```
+
+## Question 6
+Refactor the following old legacy classes.
+
+Don't go too deep, estimate up to 15 minutes of work.
+
+The code shouldn't be ideal, rather adequate for the first step of the refactoring. Feel free to leave comments in places which can be improved in the future if you see a possibility of that.
+
+### Answer 
+```php
+<?php
+
+class Document {
+
+  public $user;
+
+  public $name;
+
+  // init() is legacy-style
+  // Better to use __construct() to guarantee valid object state
+  public function init($name, User $user) {
+    // assert() is not reliable for production validation
+    // It may be disabled in production env
+    // Better use throw InvalidArgumentException
+    assert(strlen($name) > 5);
+
+    $this->user = $user;
+    $this->name = $name;
+  }
+
+  public function getTitle() {
+    $db = Database::getInstance();
+
+    // SQL injection risk here
+    // Better use prepared statements
+    $row = $db->query('SELECT * FROM document WHERE name = "' . $this->name . '" LIMIT 1');
+
+    // If db schema changes, this can be break
+    return $row[3]; // third column in a row
+  }
+
+  public static function getAllDocuments() {
+    // to be implemented later
+    // Plceholder method, should later be replaced by  a repository or service
+    return [];
+  }
+}
+
+class User {
+
+  public function makeNewDocument($name) {
+    // Corerect check should use === false
+    if(!strpos(strtolower($name), 'senior')) {
+      throw new Exception('The name should contain "senior"');
+    }
+
+    $doc = new Document();
+
+    // I prefer to use constructor
+    $doc->init($name, $this);
+
+    return $doc;
+  }
+
+  public function getMyDocuments() {
+    $list = array();
+    foreach (Document::getAllDocuments() as $doc) {
+
+      // Better compare by userID instead the object reference 
+      if ($doc->user == $this)
+        $list[] = $doc;
+    }
+    return $list;
+  }
+}
+```
 
 
