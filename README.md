@@ -54,3 +54,51 @@ function formatPhoneNumber($input, $delimiter = "-") {
 return $part1 . $delimiter . $part2 . $delimiter . $part3;
 }
 ```
+
+## Question 3
+Write a JavaScript function that would generate a hex color code `(#f1f2f3)` from the full name of a person. It should always generate the same color for a given name. Describe how you arrived at your solution.
+
+```js
+const name = 'John Doe';
+const color = getColorFromName(name); // e.g. #9bc44c
+```
+
+### Answer 
+```js
+function getColorFromName(name) {
+  // Validate input type to ensure we only process strings
+  if(typeof name !== "string") return "#0000000";
+
+  // Normalise the name
+  const normilized = name.trim().toLowerCase();
+
+  // Initialize hash value
+  let hash = 0;
+
+  // Build numeric hash
+  for(let i = 0; i < normilized.length; i++) {
+    hash = normalized.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // Convert hash into hex
+  let color = '#';
+
+  // Extract color components
+  for(let i = 0; i < 3; i++) {
+    // Shift hash
+    const value = (hash >> (i * 8)) & 0xff;
+
+    // Convert to hex
+    color += value.toString(16).padStart(2, "0");
+  }
+
+  return color;
+```
+
+
+
+
+
+
+
+
