@@ -14,3 +14,16 @@ foreach ($results as $result) {
 ```
 
 ### Answer 
+The memory eror happens because `fetchAll()` loads the entire result set into memory at once. For a large table, this quickly exhausts PHP's memory limit. 
+
+```php
+$stmt = $pdo->prepare('SELECT * FROM largeTable');
+$stmt->execute();
+
+while($result = $stmt->fetch(PDO::FETCH_ASSOC)) { ... }
+```
+
+I propose this fix, because:
+- fetchAll() -> loads everything into memory
+- fetch() -> one row at a time
+
