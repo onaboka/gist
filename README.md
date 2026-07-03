@@ -95,7 +95,118 @@ function getColorFromName(name) {
   return color;
 ```
 
+## Question 4
+Write a complete set of unit tests for one of the following code blocks. Describe how the approach might change for the other language.
 
+```php
+function fizzBuzz($start = 1, $stop = 100)
+{
+  $string = '';
+
+  if($stop < $start || $start < 0 || $stop < 0) {
+    throw new InvalidArgumentException;
+  }
+
+  for($i = $start; $i <= $stop; $i++) {
+    if($i % 3 == 0 && $i % 5 == 0) {
+      $string .= 'FizzBuzz';
+      continue;
+    }
+
+    if($i % 3 == 0) {
+      $string .= 'Fizz';
+      continue;
+    }
+
+    if ($i % 5 == 0) {
+      $string .= 'Buzz';
+      continue;
+    }
+
+    $string .= $i;
+  }
+
+  return $string;
+}
+```
+
+### Answer 
+```php
+use PHPUnit\Framework\TestCase;
+
+class fizzBuzzTest extends TestCase
+{
+  // #1 Default behaviour
+  public function testFizzBuzzDefaultRange() {
+    $result = fizzBuzz(1, 15);
+
+    $this-assertEquals(
+      "12Fizz4BuzzFizz78FizzBuzz11Fizz1314FizzBuzz",
+      $result
+    )
+  }
+
+  // #2 Custom valid range
+  public function testFizzBuzzCustomRange() {
+    $result = fizzBuzz(3, 5);
+
+    $this-assertEquals(
+      "Fizz4Buzz",
+      $result
+    )
+  }
+
+  // #3 Single number - Fizz
+  public function testFizzBuzzCustomRange() {
+    $result = fizzBuzz(3, 3);
+
+    $this-assertEquals(
+      "Fizz",
+      $result
+    )
+  }
+
+  // #4 Single number - Buzz
+  public function testFizzBuzzCustomRange() {
+    $result = fizzBuzz(5, 5);
+
+    $this-assertEquals(
+      "Buzz",
+      $result
+    )
+  }
+
+  // #5 Single number - FizzBuzz
+  public function testFizzBuzzCustomRange() {
+    $result = fizzBuzz(15, 15);
+
+    $this-assertEquals(
+      "FizzBuzz",
+      $result
+    )
+  }
+
+  // #6 Normal number
+  public function testFizzBuzzCustomRange() {
+    $result = fizzBuzz(7, 7);
+
+    $this-assertEquals(
+      7,
+      $result
+    )
+  }
+
+  // #7 Boundary condition check
+  public function testFizzBuzzCustomRange() {
+    $result = fizzBuzz(0, 3);
+
+    $this-assertStringContainsString(
+      "Fizz",
+      $result
+    )
+  }
+}
+```
 
 
 
