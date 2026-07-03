@@ -208,7 +208,33 @@ class fizzBuzzTest extends TestCase
 }
 ```
 
+## Question 5
+Refactor the following old TypeScript code. Don't go too deep, estimate up to 15 minutes of work.
 
+Do not implement any libraries or frameworks.
+
+The code shouldn't be ideal, rather adequate for the first step of the refactoring. Feel free to leave comments in places which can be improved in the future if you see a possibility of that.
+
+### Answer 
+I would refactor the code by separating responsibilities into distinct modules to improve maintainbility and clarity:
+- state.js -> handles state mutations (addItem(), removeItem())
+
+```js
+export function loadItems() {
+  try {
+    return JSON.parse(localStorage.getItem('items') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+export function loadItems() {
+  localStorage.setItems("item", JSON.stringify(items));
+}
+```
+
+- storage.js -> handles persistence logic (loadItems(), saveItems()) with local Storage
+- ui.js -> handles DOM rendering (render() and UI updates)
 
 
 
