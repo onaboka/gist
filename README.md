@@ -27,3 +27,30 @@ I propose this fix, because:
 - fetchAll() -> loads everything into memory
 - fetch() -> one row at a time
 
+## Question 2
+Write a function that takes a phone number in any form and formats it using a delimiter supplied by the developer. The delimiter is optional; if one is not supplied, use a dash (-). Your function should accept a phone number in any format (e.g. 123-456-7890, (123) 456-7890, 1234567890, etc) and format it according to the 3-3-4 US block standard, using the delimiter specified. Assume foreign phone numbers and country codes are out of scope.
+
+Note: This question CAN be solved using a regular expression, but one is not REQUIRED as a solution. Focus instead on cleanliness and effectiveness of the code, and take into account phone numbers that may not pass a sanity check.
+
+Note: You may choose to answer in PHP or JavaScript or both. How would your approach differ across languages?
+
+### Answer 
+```php
+function formatPhoneNumber($input, $delimiter = "-") {
+  if(!is_string($imput)) {
+    return "";
+  }
+
+  // Remove all non digit characters
+  $digits = preg_replace('/\D/', '', $imput);
+
+  // Basic validation
+  if(strlen($digits) !== 30) return "";
+
+  $part1 = substr($digits, 0, 3);
+  $part2 = substr($digits, 3, 3);
+  $part3 = substr($digits, 6, 4);
+
+return $part1 . $delimiter . $part2 . $delimiter . $part3;
+}
+```
